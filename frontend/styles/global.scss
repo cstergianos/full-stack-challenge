@@ -1,0 +1,171 @@
+@import './variables';
+
+@font-face {
+  font-family: 'Luna';
+  src:  url('../assets/fonts/Luna-Medium.woff2') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Luna', cursive;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  padding: $indent-base $indent-s;
+}
+
+.headerIcon {
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+}
+
+.toggle-container {
+  flex-basis: 100%;
+  display: block;
+
+  .sort-icon {
+    max-width: 30px;
+  }
+
+  .toggle-switch {
+    position: relative;
+    display: block;
+    width: 50px;
+    height: 25px;
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    input[type="checkbox"]:checked + .switch::before {
+      transform: translateX(25px);
+      background-color: $pure-white;
+    }
+
+    input[type="checkbox"]:checked + .switch {
+      background-color: $moonpay-purple;
+    }
+
+    .switch {
+      position: absolute;
+      cursor: pointer;
+      background-color: #ccc;
+      border-radius: 25px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transition: background-color 0.2s ease;
+
+      &::before {
+        position: absolute;
+        content: "";
+        left: 2px;
+        top: 2px;
+        width: 21px;
+        height: 21px;
+        background-color: #aaa;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+    }
+  }
+}
+
+.tokensGrid {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: $moonpay-purple;
+
+  .tokenContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: center;
+
+    span {
+      align-items: center;
+      border: 2px solid $pure-white;
+      border-radius: 20px;
+      box-sizing: border-box;
+      color: $pure-white;
+      display: flex;
+      height: 60px;
+      justify-content: center;
+      text-align: center;
+      width: 100%;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-mobile) {
+  .headerIcon {
+    max-width: $logo-small;
+  }
+
+  .tokensGrid {
+    margin: 0 $indent-s;
+    padding: $indent-s 0;
+  }
+
+  .tokenContainer {
+    flex-basis: 100%;
+    padding: $indent-s;
+
+
+    span {
+      padding: $indent-xs;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-tablet) {
+  .headerIcon {
+    max-width: $logo-base;
+  }
+
+  .tokensGrid {
+    margin: $indent-base;
+    padding: $indent-base;
+  }
+
+  .tokenContainer {
+    flex-basis: 50%;
+    padding: $indent-s 0;
+
+    span {
+      padding: $indent-xs;
+      max-width: 300px;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-desktop) {
+  .headerIcon {
+    margin: $indent-base auto $indent-base $indent-base;
+    max-width: $logo-base;
+  }
+
+  .tokensGrid {
+    margin: $indent-base;
+    padding: $indent-base;
+  }
+
+  .tokenContainer {
+    flex-basis: 33.33%;
+    padding: $indent-s 0;
+
+    span {
+      padding: $indent-xs;
+      max-width: 300px;
+    }
+  }
+}
+
