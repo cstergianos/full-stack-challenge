@@ -55,6 +55,10 @@ body {
     flex-basis: 50%;
     padding: $indent-s 0;
 
+    &#testmode-enabled .switch {
+  
+    }
+
     &#sort-by-code-enabled {
       flex-basis: 100%;
       justify-content: center;
@@ -299,10 +303,21 @@ body {
     background-color: transparent;
     border-radius: 0;
     flex-basis: 50%;
+
+    .toggle,
+    .toggle#sort-by-code-enabled {
+      justify-content: flex-end;
+    }
   }
 
-  .sort-shuffle-container div.wrapper {
-    justify-content: flex-end;
+  .sort-shuffle-container {
+    div.wrapper {
+      justify-content: center;
+    }
+
+    div.btn-wrapper {
+      justify-content: flex-start;
+    }
   }
 
   .toggle-container,
