@@ -1,17 +1,18 @@
 @import './variables';
+@import '~@fortawesome/fontawesome-svg-core/styles.css';
 
 @font-face {
   font-family: 'Luna';
-  src:  url('../assets/fonts/Luna-Medium.woff2') format('truetype');
-  font-weight: 500;
   font-style: normal;
+  font-weight: 500;
+  src:  url('../assets/fonts/Luna-Medium.woff2') format('truetype');
 }
 
 html,
 body {
-  padding: 0;
-  margin: 0;
   font-family: 'Luna', cursive;
+  margin: 0;
+  padding: 0;
 }
 
 .header {
@@ -21,43 +22,110 @@ body {
 }
 
 .headerIcon {
-  text-align: center;
   display: block;
   margin: 0 auto;
+  text-align: center;
 }
 
 .toggle-container {
-  flex-basis: 100%;
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  padding: $indent-s;
+  background-color: $moonpay-grey;
+  border-radius: 12px 12px 0 0;
 
-  .sort-icon {
+  .icon {
+    max-width: 20px;
+  }
+
+  .shuffle-icon {
     max-width: 30px;
+    margin-left: $indent-s;
+  }
+
+  .sort-icon,
+  .shuffle-icon {
+    display: block;
+  }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-basis: 50%;
+    padding: $indent-s 0;
+
+    &#sort-by-code-enabled {
+      flex-basis: 100%;
+      justify-content: center;
+
+      input[type="checkbox"]:checked + .switch::before {
+        transform: translateX(48px);
+      }
+
+      .toggle-switch {
+        min-width: 75px;
+      }
+    }
   }
 
   .toggle-switch {
     position: relative;
     display: block;
-    width: 50px;
-    height: 25px;
+    min-width: 50px;
+    height: 27px;
+    margin: 0 $indent-xs;
+
+    .code {
+      display: none;
+      left: 43%;
+    }
+
+    .name {
+      left: 58%;
+    }
+
+    .name, .code {
+      color: black;
+      position: absolute;
+      transform: translate(-50%,-50%);
+      top: 50%;
+      font-size: 10px;
+      text-transform: uppercase;
+
+    }
+
+    &.name .name,
+    &.code .code {
+      display: block;
+    }
+
+    &.code .name,
+    &.name .code {
+      display: none;
+    }
 
     input[type="checkbox"] {
       display: none;
     }
 
     input[type="checkbox"]:checked + .switch::before {
-      transform: translateX(25px);
-      background-color: $pure-white;
+      transform: translateX(23px);
+      background-color: $moonpay-purple;
     }
 
     input[type="checkbox"]:checked + .switch {
-      background-color: $moonpay-purple;
+      background-color: $pure-white;
+      color: black;
     }
 
     .switch {
       position: absolute;
       cursor: pointer;
-      background-color: #ccc;
+      background-color: $pure-white;
+      border: 1px solid $moonpay-purple;
       border-radius: 25px;
+      box-sizing: border-box;
       top: 0;
       right: 0;
       bottom: 0;
@@ -71,7 +139,7 @@ body {
         top: 2px;
         width: 21px;
         height: 21px;
-        background-color: #aaa;
+        background-color: $moonpay-purple;
         border-radius: 50%;
         transition: transform 0.3s ease;
       }
@@ -79,10 +147,52 @@ body {
   }
 }
 
+.sort-shuffle-container {
+  background-color: $moonpay-grey;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 0 $indent-s $indent-s;
+
+  div.wrapper {
+    display: flex;
+    min-width: 80px;
+    flex-wrap: wrap;
+    align-items: center;
+    flex-basis: 50%;
+    justify-content: center;
+
+    span {
+      margin-right: $indent-s;
+    }
+  }
+
+  div.btn-wrapper {
+    flex-basis: 50%;
+    justify-content: center;
+    display: flex;
+
+    button {
+      flex-basis: 50%;
+      min-width: 120px;
+      background-color: $moonpay-purple;
+      border-color: $moonpay-purple;
+      border-radius: 24px;
+      color: $pure-white;
+      text-transform: uppercase;
+    }
+  }
+
+  .sort-icon {
+    max-width: 20px;
+    min-height: 32px;
+  }
+}
+
 .tokensGrid {
   display: flex;
   flex-wrap: wrap;
-  background-color: $moonpay-purple;
+  background-color: $moonpay-grey;
 
   .tokenContainer {
     display: flex;
@@ -92,10 +202,12 @@ body {
 
     span {
       align-items: center;
+      background-color: $pure-white;
       border: 2px solid $pure-white;
-      border-radius: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 3px 15px rgba(0,0,0,0.2);;
       box-sizing: border-box;
-      color: $pure-white;
+      color: black;
       display: flex;
       height: 60px;
       justify-content: center;
@@ -111,7 +223,6 @@ body {
   }
 
   .tokensGrid {
-    margin: 0 $indent-s;
     padding: $indent-s 0;
   }
 
@@ -126,13 +237,35 @@ body {
   }
 }
 
+@media (min-width: $breakpoint-mobile-xl) {
+  .toggle-container {
+    .toggle,
+    .toggle#sort-by-code-enabled{
+      flex-basis: 33.33%;
+    }
+  }
+}
+
 @media (min-width: $breakpoint-tablet) {
   .headerIcon {
     max-width: $logo-base;
   }
 
+  .toggle-container,
+  .sort-shuffle-container {
+    margin: 0 $indent-base;
+  }
+
+  .sort-shuffle-container {
+    padding: $indent-s;
+
+    button {
+      padding: $indent-s;
+    }
+  }
+
   .tokensGrid {
-    margin: $indent-base;
+    margin: 0 $indent-base;
     padding: $indent-base;
   }
 
@@ -153,9 +286,35 @@ body {
     max-width: $logo-base;
   }
 
+  .flex-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: $moonpay-grey;
+    margin: 0 $indent-base;
+    border-radius: 12px 12px;
+    padding-top: $indent-s;
+  }
+
+  .toggle-container {
+    background-color: transparent;
+    border-radius: 0;
+    flex-basis: 50%;
+  }
+
+  .sort-shuffle-container div.wrapper {
+    justify-content: flex-end;
+  }
+
+  .toggle-container,
+  .sort-shuffle-container {
+    margin: 0;
+    padding: $indent-s 0;
+    flex-basis: 50%;
+  }
+
   .tokensGrid {
-    margin: $indent-base;
-    padding: $indent-base;
+    margin: 0 $indent-base $indent-base;
+    padding: 0;
   }
 
   .tokenContainer {

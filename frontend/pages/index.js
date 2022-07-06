@@ -1,59 +1,98 @@
 import Head from "next/head"
-import Footer from "../components/Footer";
-import useSortableData from '../hooks/useSortableData'
-import { useState } from "react";
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faArrowDownAZ,faArrowUpZA, faSort, faShuffle } from '@fortawesome/free-solid-svg-icons'
-
 import MoonPayIcon from "../assets/icons/logo-full-purple.svg";
+import ShuffleData from "../hooks/ShuffleData";
+import ToggleContainer from "../components/ToggleContainer";
+import TokensGrid from "../components/TokensGrid";
+import SortData from "../hooks/SortData";
+import { faArrowDownAZ,faArrowUpAZ, faSort, faShuffle } from "@fortawesome/free-solid-svg-icons";
+import { useState, useEffect, useRef } from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-function HomePage({ apiData, config }) {
-    const [uSisToggled, setUsIsToggled] = useState(false);
+function HomePage({ apiData }) {
+    /**
+     * Flag declarations
+     */
+    const [usIsToggled, setUsIsToggled] = useState(false);
     const [testIsToggled, setTestIsToggled] = useState(false);
-    const onUsToggle = () => setUsIsToggled(!uSisToggled);
-    const onTestToggle = () => setTestIsToggled(!testIsToggled);
-    let [shuffle, setShuffle] = useState(apiData);
+    const [shuffleIsToggled, setShuffleIsToggled] = useState(false);
+    const [sortByCodeIsToggled, setSortByCodeIsToggled] = useState(false);
+    const firstUpdateSort = useRef(true);
+
+    /**
+     * Component references
+     */
+    const { items, requestSort, sortConfig } = SortData(
+        apiData,
+        {key: sortByCodeIsToggled === true ? 'code' : 'name', direction: 'ascending'}
+    );
+
+    const { shuffleItems, requestShuffle } = ShuffleData(items);
+
+    /**
+     * Helpers
+     */
+    const handleChange = () => {
+        setShuffleIsToggled(false);
+    };
+
+    const handleClick = () => {
+        setShuffleIsToggled(true);
+    };
+
+    const getClassNamesFor = (name) => {
+        if (!sortConfig) {
+            return;
+        }
+        return sortConfig.key === name ? sortConfig.direction : 'ascending';
+    };
+
+    useEffect(() => {
+        if (firstUpdateSort.current) {
+            firstUpdateSort.current = false;
+        } else {
+            requestSort(sortByCodeIsToggled === true ? 'code' : 'name' )
+        }
+    },[sortByCodeIsToggled])
 
 
+    /**
+     * Mini component for the sort direction toggle
+     *
+     * @param direction
+     * @param id
+     * @param onClick
+     * @param sortBy
+     * @returns SortButton
+     * @constructor
+     */
     const SortButton = ({ direction, id, onClick, sortBy }) => {
-        const arrows = { ascending: faArrowDownAZ, descending: faArrowUpZA }
+        const arrows = { ascending: faArrowDownAZ, descending: faArrowUpAZ }
         const arrow = sortBy === id ? arrows[direction] : faSort
 
         return (
-            <FontAwesomeIcon className='sort-icon' id={id} onClick={onClick} icon={arrow} />
+            <div className='wrapper'>
+                <span>Sort</span>
+                <FontAwesomeIcon className='sort-icon' id={id} onClick={onClick} icon={arrow} />
+            </div>
         )
     }
 
-    const shuffleArray = () => {
-        for (let i = shuffle.length; --i;)  {
-            let j = Math.floor(Math.random() * (i + 1));
-            [shuffle[i], shuffle[j]] = [shuffle[j], shuffle[i]]
-        }
-        setShuffle([...shuffle]);
+    /**
+     * Mini component for the shuttle button
+     *
+     * @param onClick
+     * @returns ShuffleButton
+     * @constructor
+     */
+    const ShuffleButton = ({onClick}) => {
+        return (
+            <div className='btn-wrapper'>
+                <button onClick={onClick}>
+                    <FontAwesomeIcon className='shuffle-icon' icon={faShuffle} /> Shuffle
+                </button>
+            </div>
+        )
     }
-
-    // /**
-    //  * Shuffles a given array
-    //  *
-    //  * @param array - The array to sort.
-    //  * @returns {array}
-    //  */
-    // const shuffleTableData = (array) => {
-    //     shuffle = array;
-    //     for (let i = shuffle.length - 1; i > 0; i--) {
-    //         let j = Math.floor(Math.random() * (i + 1));
-    //         let temp = shuffle[i];
-    //         shuffle[i] = shuffle[j];
-    //         shuffle[j] = temp;
-    //     }
-    //
-    //     setShuffle([...shuffle]);
-    // };
-
-    const { items, requestSort, sortConfig } = useSortableData(
-        apiData,
-        config
-    );
 
     return (
         <div className='startGrid'>
@@ -64,66 +103,41 @@ function HomePage({ apiData, config }) {
             </Head>
             <div className="header">
                 <img src={MoonPayIcon.src} className='headerIcon'/>
-                <div className='toggle-container'>
-                    <div className='toggle' id='us-enabled'>
-                        <span>United States Available: </span>
-                        <label className="toggle-switch">
-                            <input type="checkbox" checked={uSisToggled} onChange={onUsToggle} />
-                            <span className="switch" />
-                        </label>
-                    </div>
+            </div>
 
-                    <div className='toggle' id='testmode-enabled'>
-                        <span>Test Mode Supported: </span>
-                        <label className="toggle-switch">
-                            <input type="checkbox" checked={testIsToggled} onChange={onTestToggle} />
-                            <span className="switch" />
-                        </label>
-                    </div>
+            <div className='flex-wrapper'>
+                <ToggleContainer
+                testIsToggled={testIsToggled}
+                setTestIsToggled={setTestIsToggled}
+                usIsToggled={usIsToggled}
+                setUsIsToggled={setUsIsToggled}
+                sortByCodeIsToggled={sortByCodeIsToggled}
+                setSortByCodeIsToggled={setSortByCodeIsToggled}
+                setShuffleIsToggled={setShuffleIsToggled}
+                />
+
+                <div className='sort-shuffle-container'>
                     <SortButton
-                        direction={sortConfig?.direction}
-                        id="name"
-                        onClick={() => requestSort('name')}
-                        sortBy={sortConfig?.key}
+                        id={sortByCodeIsToggled === true ? 'code' : 'name'}
+                        onClick={() => {requestSort(sortByCodeIsToggled === true ? 'code' : 'name' ); handleChange();}}
+                        className={getClassNamesFor(sortByCodeIsToggled === true ? 'code' : 'name')}
+                        sortBy={sortByCodeIsToggled === true ? 'code' : 'name'}
+                        direction={sortConfig.direction}
                     />
-                    <FontAwesomeIcon className='shuffle-icon' onClick={shuffleArray} icon={faShuffle} />
+
+                    <ShuffleButton onClick={() => { requestShuffle(items); handleClick();}}/>
                 </div>
             </div>
 
-            {/*.sort((a, b) => a.name > b.name ? -1 : 1)*/}
 
-            {uSisToggled === true && testIsToggled === false &&
-                <div className='tokensGrid'>
-                    {items.filter(token => token.isSupportedInUS === true).map(token => (
-                        <div className='tokenContainer' id={token.code}><span>{token.name} - {token.code}</span></div>
-                    ))}
-                </div>
-            }
+            <TokensGrid
+                items={items}
+                usIsToggled={usIsToggled}
+                testIsToggled={testIsToggled}
+                shuffleItems={shuffleItems}
+                shuffleIsToggled={shuffleIsToggled}
+            />
 
-            {uSisToggled === false && testIsToggled === true &&
-                <div className='tokensGrid'>
-                    {items.filter(token => token.supportsTestMode === true).map(token => (
-                        <div className='tokenContainer' id={token.code}><span>{token.name} - {token.code}</span></div>
-                    ))}
-                </div>
-            }
-
-            {uSisToggled === true && testIsToggled === true &&
-                <div className='tokensGrid'>
-                    {items.filter(token => token.isSupportedInUS === true && token.supportsTestMode === true).map(token => (
-                        <div className='tokenContainer' id={token.code}><span>{token.name} - {token.code}</span></div>
-                    ))}
-                </div>
-            }
-
-            {uSisToggled === false &&
-                <div className='tokensGrid'>
-                {items.map((token) => (
-                    <div className='tokenContainer' id={token.code}><span>{token.name} - {token.code}</span></div>
-                ))}
-                </div>
-            }
-            <Footer/>
         </div>
     );
 }
